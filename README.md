@@ -1,23 +1,23 @@
 # PHP BLOG CMS
-## CONTENT MANAGEMENT FEATURES
+## 📖 CONTENT MANAGEMENT FEATURES
 
 - article management
 - account management
 - category management
 
-### MANAGEMENT ROLES
+### 👨‍💼 MANAGEMENT ROLES
 
 - admin: fully management access
 - author: article management access
 
-### ACCOUNT FEATURED
+### 👥 ACCOUNT FEATURED
 
 - 2fa enabled by default on admin role
 - email verification
 - password reset
 - remember me
 
-### EXTRA FEATURED
+### 🎇 EXTRA FEATURED
 
 - tinymce integration editor
 - self hosting images
@@ -34,7 +34,7 @@
 - pagination
 - responsive design
 
-### INSTALLATION
+### 🔧 INSTALLATION
 
 1. create a database and import "**vision.sql**" file into that database. 
 2. config `dash\auth\includes\dbh.php` file with your database information.
@@ -54,9 +54,9 @@ WHERE id = 19;
 ```
 6. go to localhost/YOUR_BLOG_DIRECTORY/dash to log into dashboard.
 
-### SCREENSHOTS
+### 📷 SCREENSHOTS
 
-![img 1](https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/1.png?raw=true)
-![img 2](https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/2.png?raw=true)
-![img 3](https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/3.png?raw=true)
-![img 4](https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/4.png?raw=true)
+<img src="https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/1.png?raw=true" width="auto" height="250" />
+<img src="https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/2.png?raw=true" width="auto" height="250" />
+<img src="https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/3.png?raw=true" width="auto" height="250" />
+<img src="https://github.com/lynchzival/php-blog-cms/blob/main/screenshot/4.png?raw=true" width="auto" height="250" />
