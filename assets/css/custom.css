@@ -1,0 +1,136 @@
+/* *{
+    border: 1px solid rgba(0, 0, 0, 0.30);
+} */
+
+.banner-top-thumb{
+    object-fit: cover;
+}
+
+.small-thumb{
+    width: 100%;
+    height: 128px !important;
+    object-fit: cover;
+}
+
+.big-thumb {
+    width: 100%;
+    height: 356px !important;
+    object-fit: cover;
+}
+
+.multi-small-thumb{
+    width: 100%;
+    height: 236px !important;
+    object-fit: cover;
+}
+
+.img-cat-thumb{
+    width: 100%;
+    height: 247px !important;
+    object-fit: cover;
+}
+
+.related_article_thumb{
+    width: 100%;
+    height: 188px !important;
+    object-fit: cover;
+}
+
+.pagination .page-item .page-link {
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 5px !important;
+    border: 0 !important;
+    background: #f8f9fa;
+}
+
+.pagination .page-item{
+    margin: 0 3px;
+}
+
+.carousel-image {
+    position: relative;
+    z-index: -1;
+}
+
+.overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    background-image: linear-gradient(147deg, #000000 0%, #2c3e50 74%);
+    opacity: 0.85;
+}
+
+.search-container{
+    height: auto ;
+}
+
+.image-hover{
+    overflow: hidden;
+}
+
+/* .carousel-image {
+    position: relative;
+    background: linear-gradient(transparent 10%, rgba(0, 0, 0, 0.75));
+    box-shadow: 0 2px 4px gray;
+} */
+
+.carousel-image img {
+    width: 100%;
+    height: 345px !important;
+    /* mix-blend-mode: darken; */
+    object-fit: cover;
+}
+
+#article_content{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif !important;
+}
+
+#article_content img {
+    max-width: 100% !important;
+    margin-top: 0.5;
+    margin-bottom: 0.5;
+    object-fit: contain;
+}
+
+
+/* AUTHOR */
+
+.card {
+    width: 400px;
+    border: none;
+    border-radius: 10px;
+    background-color: #fff
+}
+
+.stats {
+    background: #f2f5f8 !important;
+    color: #000 !important
+}
+
+.articles {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number1 {
+    font-weight: 500
+}
+
+.followers {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number2 {
+    font-weight: 500
+}
+
+.rating {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number3 {
+    font-weight: 500
+}
