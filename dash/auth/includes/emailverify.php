@@ -98,7 +98,7 @@ if (isset($_GET['verify'])) {
             } else {
                 if ($_GET['verify_token'] == $result['email_verified_token']) {
                     try {
-                        $sql = "UPDATE users SET status = 1 WHERE id = :id";
+                        $sql = "UPDATE users SET email_verified_status = 1 WHERE id = :id";
                         $handler = $db_conn -> prepare($sql);
                         $handler -> bindParam(":id", $result['id'], PDO::PARAM_INT);
                         $handler -> execute();

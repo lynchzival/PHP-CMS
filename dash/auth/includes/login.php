@@ -41,24 +41,39 @@ if(isset($_POST["signin"])){
             if ($password) {
 
                 if ($result['status'] == 1) {
-                    if ($result['role'] == 1) {
-                        $remember = isset($_POST['remember-me']) ? true : false;
-                        signin($result['id'], "../", $remember);
 
-                    } else {
-                        $_SESSION['2fa'] = [
+                    if ($result['email_verified_status'] == 0) {
+
+                        $_SESSION['email_verify'] = [
                             "verify" => true,
-                            "remember_me" => $_POST['remember-me'],
                             "user_id" => $result['id']
                         ];
                         header("Location: ../");
                         exit;
-
+                        
+                    } else {
+                        if ($result['role'] == 1) {
+                            $remember = isset($_POST['remember-me']) ? true : false;
+                            signin($result['id'], "../", $remember);
+    
+                        } else {
+                            $_SESSION['2fa'] = [
+                                "verify" => true,
+                                "remember_me" => $_POST['remember-me'],
+                                "user_id" => $result['id']
+                            ];
+                            header("Location: ../");
+                            exit;
+    
+                        }
                     }
+
                 } else {
-                    $_SESSION['email_verify'] = [
-                        "verify" => true,
-                        "user_id" => $result['id']
+
+                    $_SESSION['signinpass'] = [
+                        "user_id" => $result['id'],
+                        "remember_me" => $_POST['remember-me'],
+                        "user_name" => $result['name']
                     ];
                     header("Location: ../");
                     exit;

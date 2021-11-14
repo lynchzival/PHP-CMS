@@ -17,21 +17,13 @@ if (isset($_POST['create'])) {
     $create = [
         'username' => $_POST['name'],
         'email' => $_POST['email'],
-        'role' => $_POST['role'],
-        'password' => $_POST['password'],
-        'confirmed_password' => $_POST['retype_pass']
+        'role' => $_POST['role']
     ];
 
     $validation = $validator->make($create, [
         'username' => 'required',
         'email' => 'required|email|unique:users,email',
-        'role' => 'required',
-        'password' => 'required|regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/',
-        'confirmed_password' => 'required|same:password'
-    ]);
-
-    $validation->setMessages([
-        'regex' => ':attribute must atleast 6 characters long and contains <ul class="text-capitalize"><li>at least one lower case letter</li><li>at least one upper case letter</li><li>at least one digit</li><ul>',
+        'role' => 'required'
     ]);
 
     $validation->validate();
@@ -46,20 +38,30 @@ if (isset($_POST['create'])) {
         exit;
     } else {
 
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 6; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+
         $name = $_POST['name'];
         $email = $_POST['email'];
-        $hashed_pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $hashed_pass = password_hash($randomString, PASSWORD_DEFAULT);
         $role = $_POST['role'];
 
         try {
 
-            $sql = "INSERT INTO users(name, email, password, role, created_at)
-            VALUES(:name, :email, :password, :role, current_timestamp())";
+            $token = bin2hex(random_bytes(16));
+
+            $sql = "INSERT INTO users(name, email, email_verified_at, email_verified_token, email_verified_status, password, role, created_at)
+            VALUES(:name, :email, current_timestamp(), :email_verified_token, 1, :password, :role, current_timestamp())";
 
             $handler = $db_conn -> prepare($sql);
 
             $handler -> bindParam(":name", $name);
             $handler -> bindParam(":email", $email);
+            $handler -> bindParam(":email_verified_token", $token);
             $handler -> bindParam(":password", $hashed_pass);
             $handler -> bindParam(":role", $role, PDO::PARAM_INT);
 
@@ -76,7 +78,7 @@ if (isset($_POST['create'])) {
         Your email to login is below:<br><br>
         $email<br><br>
         Your password to login is below:<br><br>
-        {$_POST['password']}<br><br>
+        {$randomString}<br><br>
         To log in, go to this page:<br><br>
         $base_url/dash<br><br>
         account verification might require on your first log in.<br><br>
@@ -146,7 +148,7 @@ if (isset($_POST['update'])) {
             updated_at = current_timestamp(),
             email = :email,
             password = COALESCE(:password, password),
-            status = CASE WHEN email = @email THEN status ELSE 0 END
+            email_verified_status = CASE WHEN email = @email THEN email_verified_status ELSE 0 END
             WHERE id=:update_id;";
             $handler = $db_conn -> prepare($sql);
             $handler -> bindParam(":select_id", $id, PDO::PARAM_INT);
@@ -206,16 +208,26 @@ if (isset($_POST['profile_update'])) {
     ];
 
     $validate_rules = [
-        'name' => 'required',
-        'email' => 'required|email|unique:users,email,'.$result['email'],
-        'current_password' => 'required'
+        'name' => 'required'
     ];
 
-    if (!empty($_POST['password'])) {
+    if (!empty($_POST['password']) OR $_POST['email'] != $result['email']) {
         $validate_rules += [
-            'password' => 'required|regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/',
-            'confirmed_password' => 'required|same:password'
+            'current_password' => 'required'
         ];
+
+        if($_POST['email'] != $result['email']){
+            $validate_rules += [
+                'email' => 'required|email|unique:users,email,'.$result['email']
+            ];
+        }
+    
+        if (!empty($_POST['password'])) {
+            $validate_rules += [
+                'password' => 'required|regex:/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/',
+                'confirmed_password' => 'required|same:password',
+            ];
+        }
     }
 
     $validation = $validator->make($update, $validate_rules);
@@ -234,46 +246,76 @@ if (isset($_POST['profile_update'])) {
 
         header("Location: ../profile.php");
         exit;
-    } else { 
+    } else {
+
+        $dir = "../img/";
+        $file = $_FILES['profile_img'];
+        $ftype = array(
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'png' => 'image/png'
+        );
+        $fsize = 5;
+        $info = upload_img($file, $ftype, $fsize, $dir);
+
+        if ($info['error']) {
+            $_SESSION['error']['profile_img'] = $info["msg"];
+            header("Location: ../profile.php");
+            exit;
+        }
+
+        $profile = isset($info['file_name']) ? $info['file_name'] : null;
+
+        if (!empty($_POST['password']) OR $_POST['email'] != $result['email']) {
+
+            $password = empty($_POST['password']) ? null : password_hash($_POST['password'], PASSWORD_DEFAULT);
+            
+            if (password_verify($_POST['cur_password'], $result['password'])) {
+                try {
+                    $sql = "SET @email = (SELECT email FROM users WHERE id=:select_id);
+                    UPDATE users
+                    SET name = :name,
+                    updated_at = current_timestamp(),
+                    email = :email,
+                    password = COALESCE(:password, password),
+                    profile_img = COALESCE(:profile_img, profile_img),
+                    email_verified_status = IF(email = @email, email_verified_status, 0)
+                    WHERE id=:update_id;";
         
-        $password = empty($_POST['password']) ? null : password_hash($_POST['password'], PASSWORD_DEFAULT);
+                    $handler = $db_conn -> prepare($sql);
+                    $handler -> bindParam(":select_id", $id, PDO::PARAM_INT);
+                    $handler -> bindParam(":name", $_POST['name']);
+                    $handler -> bindParam(":password", $password);
+                    $handler -> bindParam(":profile_img", $profile);
+                    $handler -> bindParam(":email", $_POST['email']);
+                    $handler -> bindParam(":update_id", $id, PDO::PARAM_INT);
+                    $handler -> execute();
+                } catch (PDOException $e) {
+                    echo $e -> getMessage();
+                    exit;
+                }
 
-        if (password_verify($_POST['cur_password'], $result['password'])) {
-
-            $dir = "../img/";
-            $file = $_FILES['profile_img'];
-            $ftype = array(
-                'jpeg' => 'image/jpeg',
-                'jpg' => 'image/jpeg',
-                'png' => 'image/png'
-            );
-            $fsize = 5;
-            $info = upload_img($file, $ftype, $fsize, $dir);
-
-            if ($info['error']) {
-                $_SESSION['error']['profile_img'] = $info["msg"];
                 header("Location: ../profile.php");
                 exit;
+
+            } else {
+
+                $_SESSION['error']['current_password'] = "incorrect password";
+                header("Location: ../profile.php");
+                exit;
+
             }
 
-            $profile = isset($info['file_name']) ? $info['file_name'] : null;
-
+        } else {
             try {
-                $sql = "SET @email = (SELECT email FROM users WHERE id=:select_id);
-                UPDATE users
+                $sql = " UPDATE users
                 SET name = :name,
                 updated_at = current_timestamp(),
-                email = :email,
-                password = COALESCE(:password, password),
-                profile_img = COALESCE(:profile_img, profile_img),
-                status = CASE WHEN email = @email THEN status ELSE 0 END
+                profile_img = COALESCE(:profile_img, profile_img)
                 WHERE id=:update_id;";
-    
+                
                 $handler = $db_conn -> prepare($sql);
-                $handler -> bindParam(":select_id", $id, PDO::PARAM_INT);
                 $handler -> bindParam(":name", $_POST['name']);
-                $handler -> bindParam(":email", $_POST['email']);
-                $handler -> bindParam(":password", $password);
                 $handler -> bindParam(":profile_img", $profile);
                 $handler -> bindParam(":update_id", $id, PDO::PARAM_INT);
                 $handler -> execute();
@@ -284,13 +326,6 @@ if (isset($_POST['profile_update'])) {
 
             header("Location: ../profile.php");
             exit;
-
-        } else {
-
-            $_SESSION['error']['current_password'] = "incorrect password";
-            header("Location: ../profile.php");
-            exit;
-
         }
 
     }
