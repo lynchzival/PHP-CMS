@@ -1,38 +1,11 @@
 # PHP BLOG CMS
-## 📖 CONTENT MANAGEMENT FEATURES
+## 📖 FEATURES
 
-- article management
-- account management
-- category management
-
-### 👨‍💼 MANAGEMENT ROLES
-
-- admin: fully management access
-- author: article management access
-
-### 👥 ACCOUNT FEATURED
-
-- 2fa enabled by default on admin role
-- email verification
-- password reset
-- remember me
-
-### 🎇 EXTRA FEATURED
-
-- tinymce integration editor
-- self hosting images
-> image path `assets\images\content\ARTICLE_ID`
-- validation impose on form fields
-- article meta tags
-- pin article
-- hide article
-- social media sharing widget
-- disqus integration comment system
-- ads placeholder
-> edit ads content at `partials\_sidebar_ads.php`
-- articles search (by title or author name)
-- pagination
-- responsive design
+- users account with roles
+- 2FA, email verification, remember me
+- pin/hide article
+- disqus, tinymce integration
+- more...
 
 ### 🔧 INSTALLATION
 
