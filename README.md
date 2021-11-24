@@ -14,8 +14,7 @@
 3. config **$base_url** inside of that same file. 
 > $base_url will be used as a url prefix for sending full link of a verify by link feature<br>
 > e.g. `http://localhost/dash/auth/includes/2fa.php?verify_token=392605&verify`
-5. config mailing setting in `dash\auth\includes\sendmail.php` with your own email credential information, 
-> it's required, otherwise PHPMailer won't work. if you're using gmail account, it's recommended to turn on 2FA and use "App passwords" instead of turn on "allow less secure apps" and directly using your account password.
+4. config mailing setting in `dash\auth\includes\sendmail.php` with your own email credential information.
 5. default password to log into dashboard is **`Admin123`** with email **`fapito6771@d3ff.com`** 
 > since admin role is 2FA enabled by nature, you'll have to manually update the email to yours, in other to received 2FA email. 
 6. run the below query 
