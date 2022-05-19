@@ -12,7 +12,7 @@
 1. create a database and import "**vision.sql**" file into that database. 
 2. config `dash\auth\includes\dbh.php` file with your database information.
 3. config **$base_url** inside of that same file. 
-> $base_url will be used as a url prefix for sending full link of a verify by link feature<br>
+> $base_url will be used as a url prefix for sending full verification link<br>
 > e.g. `http://localhost/dash/auth/includes/2fa.php?verify_token=392605&verify`
 4. config mailing setting in `dash\auth\includes\sendmail.php` with your own email credential information.
 5. default password to log into dashboard is **`Admin123`** with email **`fapito6771@d3ff.com`** 
